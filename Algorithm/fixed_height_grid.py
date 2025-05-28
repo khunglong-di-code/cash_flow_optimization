@@ -1,15 +1,12 @@
-# Constants
-DIRECTIONS = ['U', 'D', 'R', 'N']
-
 # Sample grid dimensions
-c = 3  # height (rows)
-n = 4  # number of columns
+c = 4  # Số hàng
+n = 3  # Số cột
 grid = [
-    [2,  3,  4,  -1],
-    [1,  5, -4,  -7],
-    [-3, 2,  5,   3]
+    [ 4,  -1, -3],   # Hàng 0
+    [-2,   3, -1],   # Hàng 1
+    [ 0,  -2,  2],   # Hàng 2
+    [ 1,   1, -2]    # Hàng 3
 ]
-
 dp_memo = {}
 
 pattern_memo = {}
@@ -37,7 +34,7 @@ def is_valid_pattern(pattern, debts):
             return False
     return True
 
-def apply_pattern(pattern, debts):
+def apply_pattern(pattern, debts, col):
     next_debts = [0] * c
     for i in range(c):
         next_debts[i] = debts[i]
@@ -45,7 +42,9 @@ def apply_pattern(pattern, debts):
     for i in range(len(pattern)):
         d = pattern[i]
         if d == 'R':
-            next_debts[i] += debts[i]
+            if col < n - 1:
+                grid[i][col + 1] += debts[i]
+            next_debts[i] = 0
         elif d == 'U':
             next_debts[i - 1] += debts[i]
             next_debts[i] = 0
@@ -62,18 +61,17 @@ def num_transactions(pattern):
             count += 1
     return count
 
-def generate_valid_patterns():
+def generate_valid_patterns(c):
+    DIRECTIONS = ['U', 'D', 'R', 'N']
     patterns = []
-    total_patterns = 1
-    for i in range(c):
-        total_patterns *= len(DIRECTIONS)
+    total_patterns = 4 ** c
 
     for p in range(total_patterns):
         pattern = []
         temp = p
         for i in range(c):
-            pattern.append(DIRECTIONS[temp % len(DIRECTIONS)])
-            temp //= len(DIRECTIONS)
+            pattern.append(DIRECTIONS[temp % 4])
+            temp //= 4
 
         valid = True
         for i in range(c - 1):
@@ -85,9 +83,9 @@ def generate_valid_patterns():
 
     return patterns
 
-valid_patterns = generate_valid_patterns()
+valid_patterns = generate_valid_patterns(c)
 
-def DP(k, debts_tuple):
+def DP(k, debts_tuple, ):
     if (k, debts_tuple) in dp_memo:
         return dp_memo[(k, debts_tuple)]
 
@@ -105,14 +103,15 @@ def DP(k, debts_tuple):
         if k == n and 'R' in pattern:
             continue
         if is_valid_pattern(pattern, debts):
-            next_debts = apply_pattern(pattern, debts)
+            next_debts = apply_pattern(pattern, debts, k - 1)
+                
             cost = num_transactions(pattern) + DP(k + 1, tuple(next_debts))
             if cost < min_cost:
                 min_cost = cost
                 best_pattern = pattern
 
     dp_memo[(k, debts_tuple)] = min_cost
-    pattern_memo[(k, debts_tuple)] = best_pattern  # Store the best pattern
+    pattern_memo[(k, debts_tuple)] = best_pattern 
     return min_cost
 
 
@@ -135,7 +134,7 @@ def reconstruct_solution():
         if pattern is None:
             break
         transactions.append(pattern)
-        debts_tuple = apply_pattern(pattern, debts_tuple)
+        debts_tuple = apply_pattern(pattern, debts_tuple, k - 1)
         k += 1
 
     return transactions
