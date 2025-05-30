@@ -237,20 +237,8 @@ def solve_debt_settling(vertices, adj_lists):
                 transactions.append([u, edge.to, edge.flow])
     
     # In kết quả
-    print("=== DEBT SETTLING SOLUTION ===")
-    print(f"Tổng số dương: {total_positive}")
-    print(f"Tổng số âm: {total_negative}")
-    print(f"Max Flow: {max_flow}")
-    print(f"Min Cost (số cạnh tối thiểu): {min_cost}")
-    print(f"Số giao dịch: {len(transactions)}")
-    print("\nCác giao dịch:")
-    print("Từ -> Đến: Số tiền")
     
-    for transaction in transactions:
-        from_node, to_node, amount = transaction
-        print(f"{from_node} -> {to_node}: {amount}")
-    
-    return max_flow, min_cost, transactions
+    return transactions
 
 # Chạy thuật toán với dữ liệu mẫu
 if __name__ == "__main__":
@@ -281,4 +269,10 @@ if __name__ == "__main__":
                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19], 
                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]
     
-    solve_debt_settling(sample_vertices, sample_adj_lists)
+    transactions =   solve_debt_settling(sample_vertices, sample_adj_lists)
+    
+    for transaction in transactions:
+        from_node, to_node, amount = transaction
+        print(f"{from_node} -> {to_node}: {amount}")
+
+    print("Số giao dịch tối thiểu: ", len(transactions))
