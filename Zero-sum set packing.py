@@ -1,122 +1,94 @@
-def is_valid_subset(subset):
-    total = 0
-    for i in range(len(subset)):
-        total += subset[i]
-    return total == 0
-
-def remove_elements(arr, used_indices):
-    new_arr = []
-    for i in range(len(arr)):
-        if not used_indices[i]:
-            new_arr.append(arr[i])
-    return new_arr
-
-def count_set_bits(x):
-    count = 0
-    while x > 0:
-        if x & 1 == 1:
-            count += 1
-        x = x >> 1
-    return count
-
-def BestPartition(subset):
-    n = len(subset)
-    if n == 0:
-        return []
-    max_length = 0
-    best_solution = []
-    total_masks = 1 << n
-    for mask in range(1, total_masks):
-        count = count_set_bits(mask)
-        if count < 3 or count > (n // 2):
+def BEST_PARTITION(debts, subset):
+    subset = subset[:]
+    solutions = []
+    
+    # Xử lý các phần tử có giá trị 0
+    i = 0
+    while i < len(subset):
+        if debts[subset[i]] == 0:
+            # Tạo partition chỉ có 1 nhóm duy nhất
+            remaining = subset[:i] + subset[i+1:]
+            if remaining:
+                partition, _ = BEST_PARTITION(debts, remaining)
+                solutions.append(partition + [[subset[i]]])
+            else:
+                solutions.append([[subset[i]]])
+            subset.remove(subset[i])
+        else:
+            i += 1
+    
+    # Xử lý các cặp có tổng bằng 0
+    subset_copy = subset[:]
+    for i in subset_copy:
+        if i not in subset:
             continue
-        current_subset = []
-        for j in range(n):
-            if (mask & (1 << j)) != 0:
-                current_subset.append(subset[j])
-        if is_valid_subset(current_subset):
-            used_indices = []
-            for j in range(n):
-                if (mask & (1 << j)) != 0:
-                    used_indices.append(True)
-                else:
-                    used_indices.append(False)
-            remaining = remove_elements(subset, used_indices)
-            partial_part = BestPartition(remaining)
-            candidate_solution = []
-            candidate_solution.append(current_subset)
-            for part in partial_part:
-                candidate_solution.append(part)
-            total_elems = 0
-            for t in candidate_solution:
-                total_elems += len(t)
-            if total_elems > max_length:
-                max_length = total_elems
-                best_solution = candidate_solution
-    return best_solution
-
-def zero_sum_set_packing(arr):
-    n = len(arr)
-    used = []
-    for _ in range(n):
-        used.append(False)
-    result = []
-
-    for i in range(n):
-        if not used[i] and arr[i] == 0:
-            result.append([arr[i]])
-            used[i] = True
-
-    for i in range(n):
-        if used[i]:
-            continue
-        for j in range(i + 1, n):
-            if used[j]:
+        for j in subset_copy:
+            if j not in subset:
                 continue
-            if arr[i] + arr[j] == 0:
-                result.append([arr[i], arr[j]])
-                used[i] = True
-                used[j] = True
+            if i < j and debts[i] + debts[j] == 0:
+                # Tạo partition với nhóm 2 phần tử
+                remaining = [x for x in subset if x != i and x != j]
+                if remaining:
+                    partition, _ = BEST_PARTITION(debts, remaining)
+                    solutions.append(partition + [[i, j]])
+                else:
+                    solutions.append([[i, j]])
+                subset.remove(i)
+                subset.remove(j)
                 break
+    
+    # Tìm partition cho các subset lớn hơn
+    max_size = len(subset) // 2
+    if len(subset) >= 3:
+        for size in range(3, max_size + 1):
+            for s in generate_subsets(subset, size):
+                # Tính tổng không dùng sum()
+                sum_s = 0
+                for idx in s:
+                    sum_s += debts[idx]
+                if sum_s == 0:
+                    remaining = [x for x in subset if x not in s]
+                    if remaining:
+                        partition, _ = BEST_PARTITION(debts, remaining)
+                        solutions.append(partition + [s])
+                    else:
+                        solutions.append([s])
+    
+    if not solutions:
+        return [], 0
+    
+    best = solutions[0]
+    for partition in solutions:
+        if len(partition) > len(best):
+            best = partition
+    
+    k = len(best)
+    return best, k
 
-    remaining = []
-    for i in range(n):
-        if not used[i]:
-            remaining.append(arr[i])
+def generate_subsets(arr, size):
+    if size == 0:
+        yield []
+        return
+    if len(arr) < size:
+        return
+    first, rest = arr[0], arr[1:]
+    for subset in generate_subsets(rest, size - 1):
+        yield [first] + subset
+    for subset in generate_subsets(rest, size):
+        yield subset
 
-    partitions = BestPartition(remaining)
-    for part in partitions:
-        result.append(part)
-
-    return result
-
-def read_data_from_file(filename):
-    arr = []
-    file = open(filename, 'r')
-    for line in file:
-        line = line.strip()
-        if line != '':
-            num = 0
-            negative = False
-            start_index = 0
-            if line[0] == '-':
-                negative = True
-                start_index = 1
-            for i in range(start_index, len(line)):
-                num = num * 10 + (ord(line[i]) - ord('0'))
-            if negative:
-                num = -num
-            arr.append(num)
-    file.close()
-    return arr
-
-def main():
-    filename = 'data.txt'
-    arr = read_data_from_file(filename)
-    subsets = zero_sum_set_packing(arr)
-    print("Các tập con rời nhau có tổng bằng 0 (số phần tử tối đa):")
-    for subset in subsets:
-        print(subset)
+def print_partition(debts, partition):
+    result = []
+    for group in partition:
+        group_values = []
+        for i in group:
+            group_values.append(debts[i])
+        result.append(group_values)
+    print("Partition:", result)
 
 if __name__ == "__main__":
-    main()
+    debts1 = [0, 5, -5, 3, -3]
+    subset1 = [0, 1, 2, 3, 4]
+    partition, k = BEST_PARTITION(debts1, subset1)
+    print_partition(debts1, partition)
+    print("k =", k)
