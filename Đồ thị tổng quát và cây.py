@@ -1,113 +1,63 @@
-from collections import defaultdict, deque
-
-class Vertex:
-    def __init__(self, name, debt):
-        self.name = name
-        self.debt = debt
-        self.children = []
-        self.parent = None
-
-def read_graph(filepath):
-    vertices = {}
-    edges = []
-    with open(filepath, "r") as f:
-        lines = [line.strip() for line in f if line.strip() and not line.startswith("#")]
-
-    for line in lines:
-        parts = line.split()
-        if len(parts) == 2 and parts[1].lstrip('-').isdigit():
-            name, debt = parts
-            vertices[name] = Vertex(name, int(debt))
-        elif len(parts) == 2:
-            edges.append((parts[0], parts[1]))
-
-    return vertices, edges
-
-def is_tree(n, edges):
-    if len(edges) != n - 1:
-        return False
-    graph = defaultdict(list)
-    for u, v in edges:
-        graph[u].append(v)
-        graph[v].append(u)
-
-    visited = set()
-    queue = deque([edges[0][0]])  
-
-    while queue:
-        node = queue.popleft()
-        if node in visited:
-            continue
-        visited.add(node)
-        for neighbor in graph[node]:
-            if neighbor not in visited:
-                queue.append(neighbor)
-
-    return len(visited) == n
-
-def build_spanning_tree(vertices_dict, edges):
-    visited = set()
-    root_name = next(iter(vertices_dict))
-    root = vertices_dict[root_name]
-    queue = deque([root])
-    visited.add(root_name)
-
-    graph = defaultdict(list)
-    for u, v in edges:
-        graph[u].append(v)
-        graph[v].append(u)
-
-    while queue:
-        current = queue.popleft()
-        for neighbor_name in graph[current.name]:
-            if neighbor_name not in visited:
-                child = vertices_dict[neighbor_name]
-                current.children.append(child)
-                child.parent = current
-                visited.add(neighbor_name)
-                queue.append(child)
-
-    return root
-
-def FindTransactions(vertices, T_root):
+def FIND_TRANSACTIONS(V, T):
     transactions = []
 
-    def settle(vertex):
-        if not vertex.children:
-            if vertex.parent is None:
-                assert vertex.debt == 0
-                return
-            transactions.append((vertex.name, vertex.parent.name, vertex.debt))
-            vertex.parent.debt += vertex.debt
-            vertex.debt = 0
-        else:
-            for child in vertex.children:
-                settle(child)
-            if vertex.parent is not None:
-                transactions.append((vertex.name, vertex.parent.name, vertex.debt))
-                vertex.parent.debt += vertex.debt
-                vertex.debt = 0
-            else:
-                assert vertex.debt == 0
+    if not isTree(T):
+        visited = [False for _ in range(len(T['V']))]
+        parent = [-1 for _ in range(len(T['V']))]
+        deg = [0 for _ in range(len(T['V']))]
+        spanning_tree_edges = []
 
-    settle(T_root)
-    return [t for t in transactions if t[2] != 0]
+        def DFS(u):
+            visited[u] = True
+            for v in T['adj'][u]:
+                if not visited[v]:
+                    parent[v] = u
+                    deg[u] += 1
+                    deg[v] += 1
+                    spanning_tree_edges.append((u, v))
+                    DFS(v)
 
-if __name__ == "__main__":
-    filepath = "graph.txt"  
-    vertices, edges = read_graph(filepath)
-    n = len(vertices)
+        for node in T['V']:
+            if not visited[node]:
+                DFS(node)
 
-    if is_tree(n, edges):
-        print("Do thi la mot cay.")
-        T_root = build_spanning_tree(vertices, edges)
+        T = {
+            'V': T['V'][:],
+            'E': spanning_tree_edges,
+            'adj': {i: [] for i in T['V']}
+        }
+        for u, v in spanning_tree_edges:
+            T['adj'][u].append(v)
+            T['adj'][v].append(u)
+
     else:
-        print("Do thi khong phai  mot cay. Giai theo huong do thi tong quat.")
-        T_root = build_spanning_tree(vertices, edges)
+        parent = [-1 for _ in range(len(T['V']))]
+        def set_parents(u, p):
+            parent[u] = p
+            for v in T['adj'][u]:
+                if v != p:
+                    set_parents(v, u)
+        set_parents(0, -1)
 
-    transactions = FindTransactions(list(vertices.values()), T_root)
-    for frm, to, amt in transactions:
-        if amt < 0:
-            print(f"{to} -> {frm}: {-amt}")
+    while len(T['V']) > 1:
+        vc = -1
+        for node in T['V']:
+            if len(T['adj'][node]) == 1:
+                vc = node
+                break
+
+        vp = parent[vc]
+
+        if V['w'][vc] > 0:
+            transactions.append((vc, vp, abs(V['w'][vc])))
         else:
-            print(f"{frm} -> {to}: {amt}")
+            transactions.append((vp, vc, abs(V['w'][vc])))
+
+        V['w'][vp] += V['w'][vc]
+
+        T['adj'][vp].remove(vc)
+        T['adj'][vc].remove(vp)
+        T['V'].remove(vc)
+        T['E'] = [(u, v) for (u, v) in T['E'] if not (u == vc or v == vc)]
+
+    return transactions
