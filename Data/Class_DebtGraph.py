@@ -1,4 +1,5 @@
 import collections 
+from Data.Class_vertex import Vertex
 
 class DebtGraph:
     def __init__(self):

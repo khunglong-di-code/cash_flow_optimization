@@ -1,19 +1,4 @@
-# debt_solver.py - Module chứa thuật toán giải bài toán nợ trên lưới
-
-def solve_debt_on_grid(c, n, grid):
-    """
-    Giải bài toán tối ưu hóa số lượng giao dịch để xử lý nợ trên lưới
-    
-    Args:
-        c (int): Số hàng (height)
-        n (int): Số cột (width) 
-        grid (list): Ma trận nợ c x n
-    
-    Returns:
-        tuple: (min_transactions, transaction_sequence)
-    """
-    
-    # Khởi tạo memo dictionaries
+def solve_debt_on_grid(c, n, grid):  
     dp_memo = {}
     pattern_memo = {}
     
@@ -76,7 +61,7 @@ def solve_debt_on_grid(c, n, grid):
             pattern = []
             temp = p
             for i in range(c):
-                pattern.append(DIRECTIONS[temp % 4])
+                pattern.append(DIRECTIONS[temp % 4]) 
                 temp //= 4
 
             valid = True
@@ -137,7 +122,6 @@ def solve_debt_on_grid(c, n, grid):
 
         return transactions
 
-    # Thực hiện giải thuật
     first_col_debts = [0] * c
     for i in range(c):
         first_col_debts[i] = grid[i][0]

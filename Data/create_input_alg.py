@@ -1,3 +1,9 @@
+"""
+- Đọc dữ liệu chi tiêu nhóm từ file CSV, xử lý để tính toán số dư (balance) của từng người tham gia.
+- Sinh ra các cấu trúc đồ thị (graph) khác nhau (đầy đủ, cây, lưới, liên thông tổng quát, v.v.) biểu diễn các kênh giao dịch giữa các thành viên.
+- Ghi thông tin các đỉnh (người, số dư) và danh sách kề (adjacency list) của các đồ thị này ra file txt để phục vụ cho các thuật toán tối ưu hóa dòng tiền (cash flow optimization).
+
+"""
 import csv
 import collections
 import os
@@ -324,6 +330,3 @@ if __name__ == "__main__":
                  adj_alg4_path = create_grid_adj_list(1, num_people)
                  write_graph_to_txt_minimal(f"output_alg4_grid_1x{num_people}.txt", balances, adj_alg4_path, SHOULD_ENSURE_INTEGER_BALANCES)
 
-        # Alg5: Fixed Pathwidth Graph
-        adj_alg5 = create_small_pathwidth_adj_list(num_people)
-        write_graph_to_txt_minimal("output_alg5_small_pathwidth.txt", balances, adj_alg5, SHOULD_ENSURE_INTEGER_BALANCES)
