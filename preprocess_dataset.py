@@ -1,5 +1,7 @@
 import csv
 import collections
+from Data.Class_vertex import Vertex
+from Data.Class_edge import Edge
 
     def add_edge(self, u_numeric_id: int, v_numeric_id: int, is_undirected: bool = True) -> None:
         num_nodes = len(self._vertices)
