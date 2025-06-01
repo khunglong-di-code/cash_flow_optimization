@@ -225,16 +225,20 @@ while (Control == True):
                 print(f"File {filename} không tồn tại.")
                 continue
 
-            V, T = readGraph(filename)
-            if not isGrid(V, T):
-                print("File này không phải là đồ thị lưới. Vui lòng chọn lại.")
+            from Algorithm.Check_Graph import readGraph, isGrid, grid_set
+            from Algorithm.Fixed_Height_Grid import solve_debt_on_grid
+
+            vertex_data, edge_data = readGraph(filename)
+            if not isGrid(vertex_data, edge_data):
+                print("Đồ thị không phải dạng lưới.")
                 continue
 
-            transactions = FIND_TRANSACTIONS(V, T)
-            print("Các giao dịch tối ưu:")
-            for tr in transactions:
-                print(tr) 
-                  
+            r, c, grid = grid_set(vertex_data)
+            min_transactions, transaction_sequence = solve_debt_on_grid(r, c, grid)
+            print("Số giao dịch tối thiểu:", min_transactions)
+            print("Chuỗi giao dịch:")
+            for idx, pattern in enumerate(transaction_sequence):
+                print(f"Cột {idx+1}: {pattern}")
         case 7:
             print("Chức năng 7: Tìm giao dịch tối ưu bằng Min Cost Max Flow.")
             if not Sample:
@@ -262,10 +266,13 @@ while (Control == True):
                 print("File này không phải là đồ thị liên thông. Vui lòng chọn lại.")
                 continue
 
-            transactions = Mincost_Maxflow(V, T)
-            print("Các giao dịch tối ưu (Min Cost Max Flow):")
-            for tr in transactions:
-                print(tr)              
+            transactions = solve_debt_MCMF(V,T)
+            for transaction in transactions:
+                from_node, to_node, amount = transaction
+                print(f"{from_node} -> {to_node}: {amount}")
+
+            print("Số giao dịch tối thiểu: ", len(transactions))
+          
         case 0:
             print("kết thúc chương trình")
             Control = False

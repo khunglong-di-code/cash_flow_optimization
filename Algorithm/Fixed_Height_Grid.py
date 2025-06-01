@@ -129,3 +129,4 @@ def solve_debt_on_grid(c, n, grid):
     min_transactions = DP(1, tuple(first_col_debts))
     transaction_sequence = reconstruct_solution()
     return min_transactions, transaction_sequence
+
