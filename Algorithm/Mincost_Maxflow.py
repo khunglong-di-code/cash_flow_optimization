@@ -68,7 +68,8 @@ class MinCostMaxFlow:
             while v != s:
                 u = self.prev_node[v]
                 e = self.adj[u][self.pre[v]]
-                flow = min(flow, e.cap - e.flow)
+                if e.cap - e.flow < flow:
+                    flow = e.cap - e.flow
                 v = u
 
             # Tăng luồng trên đường đi
