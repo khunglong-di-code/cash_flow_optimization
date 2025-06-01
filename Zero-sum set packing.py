@@ -135,7 +135,7 @@ def print_partition(debts, partition):
 
 if __name__ == "__main__":
     debts1 = [-3, 3, -4, 4, -1, 2, -1, 0]
-    subset1 = []
+    subset1 = [0,1,2,3,4,5,6,7]
     for i in range(len(debts1)):
         subset1.append(i)
 
