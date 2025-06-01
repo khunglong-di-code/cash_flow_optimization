@@ -262,7 +262,6 @@ while (Control == True):
                 print("File này không phải là đồ thị liên thông. Vui lòng chọn lại.")
                 continue
 
-            # Giả sử hàm mincost_maxflow trả về danh sách giao dịch
             transactions = Mincost_Maxflow(V, T)
             print("Các giao dịch tối ưu (Min Cost Max Flow):")
             for tr in transactions:

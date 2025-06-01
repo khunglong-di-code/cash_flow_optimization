@@ -88,8 +88,8 @@ class MinCostMaxFlow:
 
 def solve_debt_MCMF(vertices, adj_lists):
     n = len(vertices)
-    source = n
-    sink = n + 1
+    s = n        
+    t = n + 1    
     total_nodes = n + 2
 
     mcmf = MinCostMaxFlow(total_nodes)
@@ -98,9 +98,9 @@ def solve_debt_MCMF(vertices, adj_lists):
         node_id = vertices[i][0]
         balance = vertices[i][1]
         if balance > 0:
-            mcmf.add_edge(source, node_id, balance, 0)
+            mcmf.add_edge(s, node_id, balance, 0)
         elif balance < 0:
-            mcmf.add_edge(node_id, sink, -balance, 0)
+            mcmf.add_edge(node_id, t, -balance, 0)
 
     for i in range(n):
         node_id = vertices[i][0]
@@ -108,13 +108,12 @@ def solve_debt_MCMF(vertices, adj_lists):
         for neighbor in neighbors:
             mcmf.add_edge(node_id, neighbor, INF, 1)
 
-    max_flow, min_cost = mcmf.calc(source, sink)
+    max_flow, min_cost = mcmf.calc(s, t)
 
     transactions = []
     for u in range(n):
         for edge in mcmf.adj[u]:
-            if edge.flow > 0 and edge.to != source and edge.to != sink and u != source and u != sink:
+            if edge.flow > 0 and edge.to != s and edge.to != t and u != s and u != t:
                 transactions.append([u, edge.to, edge.flow])
 
     return transactions
-
