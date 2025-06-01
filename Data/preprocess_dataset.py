@@ -2,6 +2,7 @@ import csv
 import collections
 from Data.Class_vertex import Vertex
 from Data.Class_edge import Edge
+from Data.Class_DebtGraph import DebtGraph
 
 def round_and_adjust_balances_for_graph(graph: DebtGraph) -> None:
     all_vertices = graph.get_all_vertices()

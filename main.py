@@ -1,12 +1,6 @@
-from Algorithm.Check_Graph import *
-from Algorithm.General_Graph import *
-from Algorithm.Fixed_Height_Grid import *
-from Algorithm.Mincost_Maxflow import *
+from Algorithm import *
 
-from Data.Class_DebtGraph import *
-from Data.Class_edge import *
-from Data.create_input_alg import *
-from Data.Extended_Data_Structures import *
+from Data import *
 
 import csv
 import os
@@ -269,12 +263,10 @@ while (Control == True):
                 continue
 
             # Giả sử hàm mincost_maxflow trả về danh sách giao dịch
-            transactions = mincost_maxflow(V, T)
+            transactions = Mincost_Maxflow(V, T)
             print("Các giao dịch tối ưu (Min Cost Max Flow):")
             for tr in transactions:
                 print(tr)                             
-        case _:
-            print("Nothing")
         case 0:
             print("kết thúc chương trình")
             Control = False
