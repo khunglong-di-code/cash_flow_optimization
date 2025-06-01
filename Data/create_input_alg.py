@@ -303,7 +303,7 @@ if __name__ == "__main__":
         # Alg2 & Alg6: Đồ thị tổng quát liên thông
         adj_alg2_6 = create_general_connected_adj_list(num_people, extra_edges_factor=0.25)
         write_graph_to_txt_minimal("output_alg2_6_general.txt", balances, adj_alg2_6, SHOULD_ENSURE_INTEGER_BALANCES)
-
+        
         # Alg3: Tree
         adj_alg3_path = create_tree_adj_list(num_people, tree_type="path")
         write_graph_to_txt_minimal("output_alg3_tree_path.txt", balances, adj_alg3_path, SHOULD_ENSURE_INTEGER_BALANCES)
