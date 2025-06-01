@@ -33,3 +33,5 @@ if __name__ == "__main__":
         print(f"{from_node} -> {to_node}: {amount}")
 
     print("Số giao dịch tối thiểu: ", len(transactions))
+
+    print("Success ok")
