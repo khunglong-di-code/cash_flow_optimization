@@ -148,11 +148,11 @@ while (Control == True):
             if not Sample:
                 print("Chưa có dữ liệu đồ thị. Vui lòng chạy chức năng 1 trước.")
                 continue
-            print("Danh sách file đồ thị:")
+            print("Danh sách file đồ thị có thể chọn:")
             for idx, filename in enumerate(Sample):
-                print(f"{idx+1}. {filename}")
+                print(f"{idx+1} - {filename}")
             try:
-                idx = int(input("Chọn số thứ tự Sample để thực hiện (ví dụ: 1): ")) - 1
+                idx = int(input("Chọn Sample để thực hiện (ví dụ: 1): ")) - 1
                 if idx < 0 or idx >= len(Sample):
                     print("Lựa chọn không hợp lệ.")
                     continue
@@ -176,11 +176,11 @@ while (Control == True):
             if not Sample:
                 print("Chưa có dữ liệu đồ thị. Vui lòng chạy chức năng 1 trước.")
                 continue
-            print("Danh sách file đồ thị:")
+            print("Danh sách file đồ thị có thể chọn:")
             for idx, filename in enumerate(Sample):
-                print(f"{idx+1}. {filename}")
+                print(f"{idx+1} - {filename}")
             try:
-                idx = int(input("Chọn số thứ tự Sample để thực hiện (ví dụ: 1): ")) - 1
+                idx = int(input("Chọn Sample để thực hiện (ví dụ: 1): ")) - 1
                 if idx < 0 or idx >= len(Sample):
                     print("Lựa chọn không hợp lệ.")
                     continue
@@ -208,11 +208,11 @@ while (Control == True):
             if not Sample:
                 print("Chưa có dữ liệu đồ thị. Vui lòng chạy chức năng 1 trước.")
                 continue
-            print("Danh sách file đồ thị:")
+            print("Danh sách file đồ thị có thể chọn:")
             for idx, filename in enumerate(Sample):
-                print(f"{idx+1}. {filename}")
+                print(f"{idx+1} - {filename}")
             try:
-                idx = int(input("Chọn số thứ tự Sample để thực hiện (ví dụ: 1): ")) - 1
+                idx = int(input("Chọn Sample để thực hiện (ví dụ: 1): ")) - 1
                 if idx < 0 or idx >= len(Sample):
                     print("Lựa chọn không hợp lệ.")
                     continue
@@ -240,11 +240,11 @@ while (Control == True):
             if not Sample:
                 print("Chưa có dữ liệu đồ thị. Vui lòng chạy chức năng 1 trước.")
                 continue
-            print("Danh sách file đồ thị:")
+            print("Danh sách file đồ thị có thể chọn:")
             for idx, filename in enumerate(Sample):
-                print(f"{idx+1}. {filename}")
+                print(f"{idx+1} - {filename}")
             try:
-                idx = int(input("Chọn số thứ tự Sample để thực hiện (ví dụ: 1): ")) - 1
+                idx = int(input("Chọn Sample để thực hiện (ví dụ: 1): ")) - 1
                 if idx < 0 or idx >= len(Sample):
                     print("Lựa chọn không hợp lệ.")
                     continue
@@ -265,7 +265,7 @@ while (Control == True):
             transactions = Mincost_Maxflow(V, T)
             print("Các giao dịch tối ưu (Min Cost Max Flow):")
             for tr in transactions:
-                print(tr)                             
+                print(tr)              
         case 0:
             print("kết thúc chương trình")
             Control = False
