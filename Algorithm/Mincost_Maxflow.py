@@ -62,7 +62,6 @@ class MinCostMaxFlow:
             if self.dist[t] == INF:
                 break
 
-            # Tìm lượng tăng luồng nhỏ nhất trên đường đi
             flow = INF
             v = t
             while v != s:
@@ -72,7 +71,6 @@ class MinCostMaxFlow:
                     flow = e.cap - e.flow
                 v = u
 
-            # Tăng luồng trên đường đi
             v = t
             while v != s:
                 u = self.prev_node[v]
