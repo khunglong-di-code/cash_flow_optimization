@@ -166,7 +166,7 @@ while (Control == True):
                 continue
 
             V, T = readGraph(filename)
-            transactions = FIND_TRANSACTIONS(V, T)
+            transactions = FIND_TRANSACTIONS(vertex_data, edge_data):
             print("Các giao dịch tối ưu:")
             for tr in transactions:
                 print(tr)
@@ -198,7 +198,7 @@ while (Control == True):
                 print("File này không phải là đồ thị đầy đủ. Vui lòng chọn lại.")
                 continue
 
-            transactions = FIND_TRANSACTIONS(V, T)
+            transactions = FIND_TRANSACTIONS(vertex_data, edge_data)
             print("Các giao dịch tối ưu:")
             for tr in transactions:
                 print(tr)
