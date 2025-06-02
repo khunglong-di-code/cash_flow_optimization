@@ -3,7 +3,7 @@ from Algorithm.Check_Graph import isTree
 def FIND_TRANSACTIONS(vertex_data, edge_data):
     V = {'V': [], 'w': []}
     i = 0
-    while i < 1000:  # Giới hạn tối đa 1000 đỉnh
+    while i < 1000:  
         if i >= len(vertex_data):
             break
         V['V'] += [vertex_data[i]]
