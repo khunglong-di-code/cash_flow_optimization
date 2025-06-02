@@ -1,65 +1,63 @@
 from Algorithm.Check_Graph import isTree
-
 def FIND_TRANSACTIONS(V, T):
     transactions = []
-
-    if not isTree(T):
-        visited = [False for _ in range(len(T['V']))]
-        parent = [-1 for _ in range(len(T['V']))]
-        deg = [0 for _ in range(len(T['V']))]
+    n = len(V['V'])
+    V_copy = {'V': list(V['V']), 'w': list(V['w'])}
+    T_copy = {
+        'V': list(T['V']),
+        'E': list(T['E']),
+        'adj': {k: list(v) for k, v in T['adj'].items()}
+    }
+    if not isTree(T_copy['V'], T_copy['adj']):
+        # Tạo cây khung bằng DFS
+        visited = [False] * n
         spanning_tree_edges = []
-
+        new_adj = {i: [] for i in range(n)}
+        
         def DFS(u):
             visited[u] = True
-            for v in T['adj'][u]:
+            for v in T_copy['adj'][u]:
                 if not visited[v]:
-                    parent[v] = u
-                    deg[u] += 1
-                    deg[v] += 1
                     spanning_tree_edges.append((u, v))
+                    new_adj[u].append(v)
+                    new_adj[v].append(u)
                     DFS(v)
+        
+        DFS(T_copy['V'][0])
+        
+        # Cập nhật lại T thành cây khung
+        T_copy['E'] = spanning_tree_edges
+        T_copy['adj'] = new_adj
 
-        for node in T['V']:
-            if not visited[node]:
-                DFS(node)
+    parent = [-1] * n
+    def set_parents(u, p):
+        parent[u] = p
+        for v in T_copy['adj'][u]:
+            if v != p:
+                set_parents(v, u)
+    set_parents(T_copy['V'][0], -1)
 
-        T = {
-            'V': T['V'][:],
-            'E': spanning_tree_edges,
-            'adj': {i: [] for i in T['V']}
-        }
-        for u, v in spanning_tree_edges:
-            T['adj'][u].append(v)
-            T['adj'][v].append(u)
+    temp_adj = {i: list(T_copy['adj'][i]) for i in T_copy['V']}
+    remaining_vertices = set(T_copy['V'])
 
-    else:
-        parent = [-1 for _ in range(len(T['V']))]
-        def set_parents(u, p):
-            parent[u] = p
-            for v in T['adj'][u]:
-                if v != p:
-                    set_parents(v, u)
-        set_parents(0, -1)
-
-    while len(T['V']) > 1:
+    while len(remaining_vertices) > 1:
         vc = -1
-        for node in T['V']:
-            if len(T['adj'][node]) == 1:
+        for node in remaining_vertices:
+            if len(temp_adj[node]) == 1:
                 vc = node
                 break
-
-        vp = parent[vc]
-
-        if V['w'][vc] > 0:
-            transactions.append((vc, vp, abs(V['w'][vc])))
+        if vc == -1:
+            break  
+        vp = temp_adj[vc][0] if temp_adj[vc] else -1
+        if vp == -1:
+            break 
+        amount = abs(V_copy['w'][vc])
+        if V_copy['w'][vc] > 0:
+            transactions.append((vc, vp, amount))
         else:
-            transactions.append((vp, vc, abs(V['w'][vc])))
-
-        V['w'][vp] += V['w'][vc]
-
-        T['adj'][vp].remove(vc)
-        T['adj'][vc].remove(vp)
-        T['V'].remove(vc)
-        T['E'] = [(u, v) for (u, v) in T['E'] if not (u == vc or v == vc)]
-
+            transactions.append((vp, vc, amount))
+        V_copy['w'][vp] += V_copy['w'][vc]
+        temp_adj[vp].remove(vc)
+        temp_adj[vc].remove(vp)
+        remaining_vertices.remove(vc)
     return transactions
