@@ -1,5 +1,4 @@
 from Algorithm.Check_Graph import isTree
-from Algorithm.Check_Graph import isTree
 
 def FIND_TRANSACTIONS(V, T):
     transactions = []
