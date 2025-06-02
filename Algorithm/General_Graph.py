@@ -1,26 +1,66 @@
 from Algorithm.Check_Graph import isTree
 
-def FIND_TRANSACTIONS(V, T):
+def FIND_TRANSACTIONS(vertex_data, edge_data):
+    V = {'V': [], 'w': []}
+    i = 0
+    while i < 1000:  # Giới hạn tối đa 1000 đỉnh
+        if i >= len(vertex_data):
+            break
+        V['V'] += [vertex_data[i]]
+        V['w'] += [0]
+        i += 1
+
+    T = {'V': [], 'E': [], 'adj': {}}
+    i = 0
+    while i < len(vertex_data):
+        T['V'] += [vertex_data[i]]
+        T['adj'][vertex_data[i]] = []
+        i += 1
+
+    i = 0
+    while i < len(edge_data):
+        u = edge_data[i][0]
+        v = edge_data[i][1]
+        w = edge_data[i][2]
+
+        T['E'] += [(u, v)]
+        T['adj'][u] += [v]
+
+        j = 0
+        while j < len(V['V']):
+            if V['V'][j] == u:
+                V['w'][j] = V['w'][j] - w
+            if V['V'][j] == v:
+                V['w'][j] = V['w'][j] + w
+            j += 1
+        i += 1
+
     transactions = []
-    n = 0
-    for _ in V['V']:
-        n += 1
+    n = len(V['V'])
 
     V_copy = {'V': [], 'w': []}
-    for x in V['V']:
-        V_copy['V'].append(x)
-    for x in V['w']:
-        V_copy['w'].append(x)
+    i = 0
+    while i < n:
+        V_copy['V'] += [V['V'][i]]
+        V_copy['w'] += [V['w'][i]]
+        i += 1
 
     T_copy = {'V': [], 'E': [], 'adj': {}}
-    for x in T['V']:
-        T_copy['V'].append(x)
-    for x in T['E']:
-        T_copy['E'].append(x)
+    i = 0
+    while i < len(T['V']):
+        T_copy['V'] += [T['V'][i]]
+        T_copy['adj'][T['V'][i]] = []
+        i += 1
+    i = 0
+    while i < len(T['E']):
+        T_copy['E'] += [T['E'][i]]
+        i += 1
     for k in T['adj']:
         T_copy['adj'][k] = []
-        for v in T['adj'][k]:
-            T_copy['adj'][k].append(v)
+        j = 0
+        while j < len(T['adj'][k]):
+            T_copy['adj'][k] += [T['adj'][k][j]]
+            j += 1
 
     def isTree(vertices, adj):
         visited = {}
@@ -29,77 +69,111 @@ def FIND_TRANSACTIONS(V, T):
 
         def dfs(u, parent):
             visited[u] = True
-            for w in adj[u]:
-                if not visited[w]:
+            i = 0
+            while i < len(adj[u]):
+                w = adj[u][i]
+                if visited[w] == False:
                     if not dfs(w, u):
                         return False
                 elif w != parent:
                     return False
+                i += 1
             return True
 
-        start = vertices[0]
-        if not dfs(start, -1):
+        if not dfs(vertices[0], -1):
             return False
 
         for v in visited:
-            if not visited[v]:
+            if visited[v] == False:
                 return False
         return True
 
     if not isTree(T_copy['V'], T_copy['adj']):
         visited = {}
-        for v in T_copy['V']:
-            visited[v] = False
+        i = 0
+        while i < len(T_copy['V']):
+            visited[T_copy['V'][i]] = False
+            i += 1
         spanning_tree_edges = []
         new_adj = {}
-        for v in T_copy['V']:
-            new_adj[v] = []
+        i = 0
+        while i < len(T_copy['V']):
+            new_adj[T_copy['V'][i]] = []
+            i += 1
 
         def DFS(u):
             visited[u] = True
-            for v in T_copy['adj'][u]:
-                if not visited[v]:
-                    spanning_tree_edges.append((u, v))
-                    new_adj[u].append(v)
-                    new_adj[v].append(u)
+            i = 0
+            while i < len(T_copy['adj'][u]):
+                v = T_copy['adj'][u][i]
+                if visited[v] == False:
+                    spanning_tree_edges += [(u, v)]
+                    new_adj[u] += [v]
+                    new_adj[v] += [u]
                     DFS(v)
+                i += 1
 
         DFS(T_copy['V'][0])
-
         T_copy['E'] = spanning_tree_edges
         T_copy['adj'] = new_adj
 
     parent = {}
-    for v in T_copy['V']:
-        parent[v] = -1
+    i = 0
+    while i < len(T_copy['V']):
+        parent[T_copy['V'][i]] = -1
+        i += 1
 
     def set_parents(u, p):
         parent[u] = p
-        for v in T_copy['adj'][u]:
+        i = 0
+        while i < len(T_copy['adj'][u]):
+            v = T_copy['adj'][u][i]
             if v != p:
                 set_parents(v, u)
+            i += 1
 
     set_parents(T_copy['V'][0], -1)
 
     temp_adj = {}
-    for i in T_copy['V']:
-        temp_adj[i] = []
-        for x in T_copy['adj'][i]:
-            temp_adj[i].append(x)
+    i = 0
+    while i < len(T_copy['V']):
+        u = T_copy['V'][i]
+        temp_adj[u] = []
+        j = 0
+        while j < len(T_copy['adj'][u]):
+            temp_adj[u] += [T_copy['adj'][u][j]]
+            j += 1
+        i += 1
 
     remaining_vertices = []
-    for x in T_copy['V']:
-        remaining_vertices.append(x)
+    i = 0
+    while i < len(T_copy['V']):
+        remaining_vertices += [T_copy['V'][i]]
+        i += 1
 
-    while len(remaining_vertices) > 1:
+    while True:
+        count = 0
+        i = 0
+        while i < len(remaining_vertices):
+            count += 1
+            i += 1
+        if count <= 1:
+            break
+
         vc = -1
-        for node in remaining_vertices:
-            count = 0
-            for _ in temp_adj[node]:
-                count += 1
-            if count == 1:
+        i = 0
+        while i < len(remaining_vertices):
+            node = remaining_vertices[i]
+            deg = 0
+            j = 0
+            while j < len(temp_adj[node]):
+                deg += 1
+                j += 1
+            if deg == 1:
                 vc = node
                 break
+            i += 1
+
         if vc == -1:
             break
         if len(temp_adj[vc]) > 0:
@@ -109,19 +183,49 @@ def FIND_TRANSACTIONS(V, T):
         if vp == -1:
             break
 
-        amount = V_copy['w'][V_copy['V'].index(vc)]
-        if amount > 0:
-            transactions.append((vc, vp, amount))
+        i = 0
+        while i < len(V_copy['V']):
+            if V_copy['V'][i] == vc:
+                w_vc = V_copy['w'][i]
+            i += 1
+
+        if w_vc > 0:
+            transactions += [(vc, vp, w_vc)]
         else:
-            transactions.append((vp, vc, -amount))
+            transactions += [(vp, vc, -w_vc)]
 
-        idx_vp = V_copy['V'].index(vp)
-        idx_vc = V_copy['V'].index(vc)
-        V_copy['w'][idx_vp] += V_copy['w'][idx_vc]
+        i = 0
+        while i < len(V_copy['V']):
+            if V_copy['V'][i] == vp:
+                idx_vp = i
+            if V_copy['V'][i] == vc:
+                idx_vc = i
+            i += 1
+        V_copy['w'][idx_vp] = V_copy['w'][idx_vp] + V_copy['w'][idx_vc]
 
-        temp_adj[vp] = [x for x in temp_adj[vp] if x != vc]
-        temp_adj[vc] = [x for x in temp_adj[vc] if x != vp]
+        new_temp = []
+        i = 0
+        while i < len(temp_adj[vp]):
+            if temp_adj[vp][i] != vc:
+                new_temp += [temp_adj[vp][i]]
+            i += 1
+        temp_adj[vp] = new_temp
 
-        remaining_vertices = [x for x in remaining_vertices if x != vc]
+        new_temp = []
+        i = 0
+        while i < len(temp_adj[vc]):
+            if temp_adj[vc][i] != vp:
+                new_temp += [temp_adj[vc][i]]
+            i += 1
+        temp_adj[vc] = new_temp
+
+        new_remaining = []
+        i = 0
+        while i < len(remaining_vertices):
+            if remaining_vertices[i] != vc:
+                new_remaining += [remaining_vertices[i]]
+            i += 1
+        remaining_vertices = new_remaining
 
     return transactions
+
